@@ -1,10 +1,10 @@
 import Layout from "../layout/Layout";
 
-export default function Index() {
+export default function Productos() {
    return (
       <div>
          <Layout>
-            <h1 className="text-2xl text-gray-800 font-light">Clientes</h1>
+            <h1 className="text-2xl text-gray-800 font-light">Productos</h1>
          </Layout>
       </div>
    );
