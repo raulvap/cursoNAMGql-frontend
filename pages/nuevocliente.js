@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import Layout from "../layout/Layout";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
+import Swal from "sweetalert2";
+import Layout from "../layout/Layout";
 
 // Lesson 89: creamos el mutation para enviar al servidor:
 const NUEVO_CLIENTE = gql`
@@ -88,7 +89,7 @@ export default function NuevoCliente() {
                   },
                },
             });
-            // console.log(data.nuevoCliente);
+            Swal.fire("¡Cliente creado!", "El cliente se creó correctamente", "success");
             router.push("/"); // redireccionar hacia clientes
          } catch (error) {
             guardarMensaje(error.message);
