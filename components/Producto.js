@@ -3,49 +3,54 @@ import { gql, useMutation } from "@apollo/client";
 import Router from "next/router";
 import Swal from "sweetalert2";
 
-const ELIMINAR_CLIENTE = gql`
-   mutation eliminarCliente($id: ID!) {
-      eliminarCliente(id: $id)
+// Mutation: eliminar producto (lesson 105)
+const ELIMINAR_PRODUCTO = gql`
+   mutation eliminarProducto($id: ID!) {
+      eliminarProducto(id: $id)
    }
 `;
 
-// lesson 95: necesitamos la consulta para obtener los clientes para actualizar el cache:
-const OBTENER_CLIENTES_USUARIO = gql`
-   query obtenerClientesVendedor {
-      obtenerClientesVendedor {
+const OBTENER_PRODUCTOS = gql`
+   query obtenerProductos {
+      obtenerProductos {
          id
          nombre
-         apellido
-         empresa
-         email
+         precio
+         existencia
+         creado
       }
    }
 `;
 
-export default function Cliente({ cliente }) {
-   // mutation para eliminar cliente (lesson 94)
-   const [eliminarCliente] = useMutation(ELIMINAR_CLIENTE, {
-      // Lesson 95: actualizar el cache después de eliminar un cliente, para evitar llamadas al servidor
-      update(cache) {
-         // obtener una copia del objeto de cache:
-         const { obtenerClientesVendedor } = cache.readQuery({ query: OBTENER_CLIENTES_USUARIO });
+// --- FUNCTIONAL COMPONENT ---
+export default function Producto({ producto }) {
+   const { id, nombre, precio, existencia, creado } = producto;
 
-         // Reescribir el cache
+   // Eliminar un producto (lesson 105) y actualizar cache:
+   const [eliminarProducto] = useMutation(ELIMINAR_PRODUCTO, {
+      update(cache) {
+         // primero debemos obtener los productos actuales, usamos el query
+         const { obtenerProductos } = cache.readQuery({
+            query: OBTENER_PRODUCTOS,
+         });
+
+         // Luego, reescribimos el cache (lesson 105):
          cache.writeQuery({
-            query: OBTENER_CLIENTES_USUARIO,
+            // datos actuales:
+            query: OBTENER_PRODUCTOS,
+            // con qué datos se va a reescribir:
             data: {
-               obtenerClientesVendedor: obtenerClientesVendedor.filter(
-                  (clienteActual) => clienteActual.id !== cliente.id
+               obtenerProductos: obtenerProductos.filter(
+                  (productoActual) => productoActual.id !== id
                ),
             },
          });
       },
    });
 
-   // Eliminar un cliente
-   const confirmarEliminarCliente = (id) => {
+   const confirmarEliminarProducto = (id) => {
       Swal.fire({
-         title: "¿Estás seguro que quieres eliminar este cliente?",
+         title: "¿Estás seguro que quieres eliminar este producto?",
          text: "Esta acción no se puede deshacer",
          icon: "warning",
          showCancelButton: true,
@@ -55,17 +60,18 @@ export default function Cliente({ cliente }) {
          cancelButtonText: "No, cancelar",
       }).then(async (result) => {
          if (result.isConfirmed) {
-            // Aqui elimina:
+            // Aqui elimina el producto:
             try {
-               // Eliminar por ID (lesson 94)
-               const { data } = await eliminarCliente({
+               const { data } = await eliminarProducto({
                   variables: {
                      id,
                   },
                });
 
+               console.log(data);
+
                // Mostrar Alerta:
-               Swal.fire("¡Eliminado!", data.eliminarCliente, "success");
+               Swal.fire("¡Eliminado!", data.eliminarProducto, "success");
             } catch (error) {
                console.log(error);
             }
@@ -73,28 +79,26 @@ export default function Cliente({ cliente }) {
       });
    };
 
-   // Editar un cliente:
-   const editarCliente = (id) => {
-      //Lesson 96: routing para editar cliente, enviamos la info a la página donde vamos a editar el cliente:
+   // Editar Producto: (lesson 111)
+   const editarProducto = (id) => {
+      // Router nos permite pasar parámetros
       Router.push({
-         pathname: "editarcliente/[id]",
+         pathname: "/editarproducto/[id]",
          query: { id },
       });
    };
 
    return (
       <tr>
-         <td className="border px-4 py-2">
-            {cliente.nombre} {cliente.apellido}
-         </td>
-         <td className="border px-4 py-2">{cliente.empresa}</td>
-         <td className="border px-4 py-2">{cliente.email}</td>
+         <td className="border px-4 py-2">{nombre}</td>
+         <td className="border px-4 py-2">{existencia} unidades</td>
+         <td className="border px-4 py-2">$ {precio}</td>
          <td className="border px-4 py-2">
             {" "}
             <button
                className="flex justify-center items-center bg-green-800 hover:bg-green-600 py-1 px-4 w-full text-white rounded text-xs uppercase font-bold"
                type="button"
-               onClick={() => editarCliente(cliente.id)}
+               onClick={() => editarProducto(id)}
             >
                <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +121,7 @@ export default function Cliente({ cliente }) {
             <button
                className="flex justify-center items-center bg-red-800 hover:bg-red-600 py-1 px-4 w-full text-white rounded text-xs uppercase font-bold"
                type="button"
-               onClick={() => confirmarEliminarCliente(cliente.id)}
+               onClick={() => confirmarEliminarProducto(id)}
             >
                <svg
                   xmlns="http://www.w3.org/2000/svg"
