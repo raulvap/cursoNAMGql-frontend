@@ -2,6 +2,8 @@
 import { ApolloProvider } from "@apollo/client";
 import client from "../config/apollo";
 import "../styles/globals.css";
+// Lesson 120: agreando el state a toda la app:
+import PedidoState from "../context/pedidos/PedidoState";
 
 function MyApp({ Component, pageProps }) {
    // Lesson 73: configurando Apollo Client
@@ -9,7 +11,9 @@ function MyApp({ Component, pageProps }) {
 
    return (
       <ApolloProvider client={client}>
-         <Component {...pageProps} />
+         <PedidoState>
+            <Component {...pageProps} />
+         </PedidoState>
       </ApolloProvider>
    );
 }
