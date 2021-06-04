@@ -46,7 +46,7 @@ export default function Header() {
             Usuario: {nombre} {apellido}
          </p>
          <button
-            className="bg-blue-800 w-full sm:w-auto font-bold uppercase text-xs rounded py-2 px-4 text-white shadow-md"
+            className="bg-blue-800 hover:bg-gray-800  w-full sm:w-auto font-bold uppercase text-xs rounded py-2 px-4 text-white shadow-md"
             type="button"
             onClick={() => cerrarSesion()}
          >

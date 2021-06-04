@@ -20,6 +20,30 @@ const NUEVO_PEDIDO = gql`
    }
 `;
 
+// Lesson 142: hacemos la consulta nuevamente para actualizar el cache:
+const OBTENER_PEDIDOS = gql`
+   query obtenerPedidosVendedor {
+      obtenerPedidosVendedor {
+         id
+         pedido {
+            id
+            cantidad
+            nombre
+         }
+         cliente {
+            id
+            nombre
+            apellido
+            email
+            telefono
+         }
+         vendedor
+         total
+         estado
+      }
+   }
+`;
+
 export default function NuevoPedido() {
    const router = useRouter();
    const [mensaje, setMensaje] = useState(null);
@@ -29,7 +53,18 @@ export default function NuevoPedido() {
    const { cliente, productos, total } = pedidoContext;
 
    // Lesson 134: useMutation para crear un nuevo pedido
-   const [nuevoPedido] = useMutation(NUEVO_PEDIDO);
+   const [nuevoPedido] = useMutation(NUEVO_PEDIDO, {
+      // Lesson 142: actualizamos el cache
+      update(cache, { data: { nuevoPedido } }) {
+         const { obtenerPedidosVendedor } = cache.readQuery({ query: OBTENER_PEDIDOS });
+         cache.writeQuery({
+            query: OBTENER_PEDIDOS,
+            data: {
+               obtenerPedidosVendedor: [...obtenerPedidosVendedor, nuevoPedido],
+            },
+         });
+      },
+   });
 
    const validarPedido = () => {
       // Lesson 133: para validar el formulario de nuevo pedido, habilitar o deshabilitar el botón
