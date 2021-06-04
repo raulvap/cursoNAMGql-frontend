@@ -9,14 +9,19 @@ import PedidoContext from "./PedidoContext";
 import PedidoReducer from "./PedidoReducer";
 
 // importamos los types:
-import { SELECCIONAR_CLIENTE, SELECCIONAR_PRODUCTO, CANTIDAD_PRODUCTOS } from "../../types";
+import {
+   SELECCIONAR_CLIENTE,
+   SELECCIONAR_PRODUCTO,
+   CANTIDAD_PRODUCTOS,
+   ACTUALIZAR_TOTAL,
+} from "../../types";
 
 // creamos el state:
 const PedidoState = ({ children }) => {
    // State inicial de pedidos (lesson 120)
    const initialState = {
       cliente: {},
-      producto: [],
+      productos: [],
       total: 0,
    };
 
@@ -35,11 +40,55 @@ const PedidoState = ({ children }) => {
       });
    };
 
+   // Modificar los productos del state (lesson 126)
+   // ***** DEBEMOS PASAR ESTA FUNCION AL CONTEXT MÁS ABAJO ****
+   const agregarProducto = (productosSeleccionadosDelComponente) => {
+      //Lesson 131: agregamos un state para manejar la cantidad deseada:
+      let nuevoState;
+      if (state.productos.length > 0) {
+         // Tomar del segundo arreglo, una copia para asignarlo al primero y así guardar cantidad en el nuevo objeto
+         nuevoState = productosSeleccionadosDelComponente.map((item) => {
+            const objetoTemporal = state.productos.find((itemState) => itemState.id === item.id);
+            // creamos un nuevo objeto en la var "nuevoState":
+            return { ...item, ...objetoTemporal };
+         });
+      } else {
+         nuevoState = productosSeleccionadosDelComponente;
+      }
+
+      dispatch({
+         type: SELECCIONAR_PRODUCTO,
+         payload: nuevoState,
+      });
+   };
+
+   // Modificar la cantidad de productos en el pedido: (lesson 130)
+   const cantidadProductos = (nuevoProducto) => {
+      dispatch({
+         type: CANTIDAD_PRODUCTOS,
+         payload: nuevoProducto,
+      });
+   };
+
+   // Actualizar el total a pagar (lesson 132)
+   const actualizarTotal = () => {
+      dispatch({
+         type: ACTUALIZAR_TOTAL,
+         // no hay payload pq el state tiene todo lo necesario: cantidad y precio
+      });
+   };
+
    return (
       // para mandar el state a toda la app, usamos el context que creamos: (lesson 120)
       <PedidoContext.Provider
          value={{
+            cliente: state.cliente,
+            productos: state.productos,
+            total: state.total,
             agregarCliente,
+            agregarProducto,
+            cantidadProductos,
+            actualizarTotal,
          }}
       >
          {children}
