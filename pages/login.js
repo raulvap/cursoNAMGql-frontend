@@ -50,8 +50,10 @@ export default function login() {
             setMensaje("Iniciando sesión, espere...");
 
             // Guardar el token en LocalStorage
-            const { token } = data.autenticarUsuario;
-            localStorage.setItem("token", token);
+            setTimeout(() => {
+               const { token } = data.autenticarUsuario;
+               localStorage.setItem("token", token);
+            }, 1000);
 
             //Redireccionar hacia página principal
             setTimeout(() => {

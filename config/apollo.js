@@ -9,7 +9,8 @@ import { setContext } from "apollo-link-context";
 const httpLink = createHttpLink({
    // Lesson 82: configurando apollo para autenticar usuarios en la app
    // configuración de hacia dónde nos vamos a conectar, el backend
-   uri: "http://localhost:4000/",
+   // uri: "http://localhost:4000/",
+   uri: "https://course-next-apollo-mongo-graph.herokuapp.com/",
    fetch,
 });
 

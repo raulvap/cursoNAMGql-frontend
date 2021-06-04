@@ -28,6 +28,19 @@ export default function Sidebar() {
                </Link>
             </li>
          </nav>
+
+         <nav className="mt-5 list-none">
+            <li className={router.pathname === "/mejoresvendedores" ? "bg-blue-800" : ""}>
+               <Link href="/mejoresvendedores">
+                  <a className="text-white mb-2 pl-5 block">Mejores Vendedores</a>
+               </Link>
+            </li>
+            <li className={router.pathname === "/mejoresclientes" ? "bg-blue-800" : ""}>
+               <Link href="/mejoresclientes">
+                  <a className="text-white mb-2 pl-5 block">Mejores Clientes</a>
+               </Link>
+            </li>
+         </nav>
       </aside>
    );
 }
