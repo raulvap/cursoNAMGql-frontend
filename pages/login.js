@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { gql, useMutation } from "@apollo/client";
@@ -128,11 +129,22 @@ export default function login() {
                         />
                      </div>
 
-                     <input
-                        type="submit"
-                        className="bg-gray-800 w-full mt-5 p-2 text-white uppercase hover:cursor-pointer hover:bg-gray-900 hover:font-bold"
-                        value="Iniciar Sesión"
-                     />
+                     <div className="flex row">
+                        <input
+                           type="submit"
+                           className="bg-gray-800 w-full m-5 p-2 text-white uppercase hover:cursor-pointer hover:bg-gray-900 hover:font-bold rounded"
+                           value="Iniciar Sesión"
+                        />
+
+                        <Link href="/nuevacuenta">
+                           <a
+                              className="bg-gray-800 w-full m-5 p-2 text-white uppercase hover:cursor-pointer hover:bg-gray-900 hover:font-bold rounded whitespace-nowrap"
+                              // className="text-white mb-2 pl-5 block"
+                           >
+                              Crear cuenta
+                           </a>
+                        </Link>
+                     </div>
                   </form>
                </div>
             </div>
